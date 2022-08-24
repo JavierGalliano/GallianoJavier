@@ -1,7 +1,7 @@
 class Usuario {
     constructor(nombre, apellido, libros, mascotas) {
-      this.nombre = "";
-      this.apellido = "";
+      this.nombre = nombre;
+      this.apellido = apellido;
       this.libros = [];
       this.mascotas = [];
     }
