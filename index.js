@@ -1,41 +1,95 @@
-class Usuario {
-    constructor(nombre, apellido, libros, mascotas) {
-      this.nombre = nombre;
-      this.apellido = apellido;
-      this.libros = [];
-      this.mascotas = [];
-    }
-    getFullName() {
-      return `${this.nombre} ${this.apellido}`;
-    }
-    addMascota(mascota) {
-      this.mascotas.push(mascota);
-    }
-    countMascotas() {
-      return this.mascotas.length;
-    }
-    addBook(nombre, autor) {
-      this.libros.push({ nombre, autor });
-    }
-    getBooks() {
-      return this.libros.map((libro) => `${libro.nombre} `);
+const fs = require("fs");
+
+class Contenedor {
+  constructor(name) {
+    this.name = name;
+  }
+  async getInfo() {}
+
+  async save(informacion) {
+    try {
+      let contenido = await fs.promises.readFile(`./${this.name}`, "utf-8");
+      let contenidoParseado = JSON.parse(contenido);
+      let ultimoIndice = contenidoParseado.length - 1;
+      let ultimoId = contenidoParseado[ultimoIndice].id;
+      informacion.id = ultimoId + 1;
+      let id = informacion.id;
+      contenidoParseado.push(informacion);
+      await fs.promises.writeFile(
+        `./${this.name}`,
+        JSON.stringify(contenidoParseado)
+      );
+      return id;
+    } catch (error) {
+      console.log(error);
     }
   }
-  
-  const user = new Usuario("Lautaro", "Perez", [], []);
-  
-  const user2 = new Usuario("Matias", "Perez", [], []);
-  
-  console.log(user.getFullName());
-  user.addMascota("pez");
-  console.log(user.countMascotas());
-  user.addBook("El señor de los Anillos", "J.R.R Tolkien");
-  console.log(user.getBooks());
-  
-  console.log(user2.getFullName());
-  user2.addMascota("Nemo");
-  console.log(user.mascotas);
-  console.log(user2.countMascotas());
-  user2.addBook("El señor de los Anillos", "J.R.R Tolkien");
-  user2.addBook("Cien años de soledad", "Garcia Marquez");
-  console.log(user2.getBooks());
+
+  async getById(id) {
+    try {
+      let contenido = await fs.promises.readFile(`./${this.name}`, "utf-8");
+      let contenidoParseado = JSON.parse(contenido);
+      let contenidoArray;
+      contenidoParseado.forEach((element) => {
+        if (element.id === id) {
+          contenidoArray = element;
+        }
+      });
+      return contenidoArray;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getAll() {
+    try {
+      let contenido = await fs.promises.readFile(`./${this.name}`, "utf-8");
+      let contenidoParseado = JSON.parse(contenido);
+      return contenidoParseado;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async deleteById(id) {
+    try {
+      let contenido = await fs.promises.readFile(`./${this.name}`, "utf-8");
+      let contenidoParseado = JSON.parse(contenido);
+      let nuevoContenido = contenidoParseado.filter(
+        (element) => element.id !== id
+      );
+      await fs.promises.writeFile(
+        `./${this.name}`,
+        JSON.stringify(nuevoContenido)
+      );
+      return nuevoContenido;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async deleteAll() {
+    try {
+      let contenido = await fs.promises.readFile(`./${this.name}`, "utf-8");
+      let contenidoParseado = JSON.parse(contenido);
+      await fs.promises.writeFile(`./${this.name}`, JSON.stringify([{}]));
+      return console.log("contenido eliminado");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+
+let contenedor = new Contenedor("productos.json");
+
+let informacionNueva = {
+  id: "1",
+  name: "Flauta",
+  price: 3000.0,
+};
+
+//contenedor.save(informacionNueva).then((res) => console.log(res));
+// contenedor.getById(2).then((res) => console.log(res));
+//contenedor.getAll().then((res) => console.log(res));
+//contenedor.deleteById(4).then((res) => console.log(res));
+//contenedor.deleteAll().then((res) => console.log(res));
