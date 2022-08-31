@@ -1,0 +1,17 @@
+[
+    {
+      "id": 1,
+      "name": "Piano",
+      "price": 150000
+    },
+    {
+      "id": 2,
+      "name": "Guitarra",
+      "price": 25000
+    },
+    {
+      "id": 3,
+      "name": "Bateria",
+      "price": 35000
+    }
+  ]
