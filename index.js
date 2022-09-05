@@ -1,4 +1,7 @@
 const fs = require("fs");
+const http = require("http");
+const express = require("express");
+
 
 class Contenedor {
   constructor(name) {
@@ -87,6 +90,41 @@ let informacionNueva = {
   name: "Flauta",
   price: 3000.0,
 };
+const PORT = process.env.PORT || 8080;
+
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("Inicio");
+});
+app.get("/login", (req, res) => {
+  res.send("Página de Registro");
+});
+
+app.get("/productos", async (req, res) => {
+  const productos = await contenedor.getAll().then((res) => res);
+  res.send(productos);
+});
+app.get("/productorandom", async (req, res) => {
+  const productos = await contenedor.getAll();
+  const random = Math.floor(Math.random() * productos.length);
+  res.send(productos[random]);
+});
+
+// PAGE NOT FOUND
+app.get("/*", (req, res) => {
+  const statusApp = 404;
+  res.send(
+    `<h1 style="color: red">Página no encontrada Status: ${statusApp}</h1>`
+  );
+});
+
+const server = app.listen(PORT, () => {
+  console.log(`Server is up and running in PORT: ${PORT}`);
+});
+server.on("error", (error) => {
+  console.log(error);
+});
 
 //contenedor.save(informacionNueva).then((res) => console.log(res));
 // contenedor.getById(2).then((res) => console.log(res));
